@@ -97,7 +97,8 @@ class FortniteClient
                 'form_params' => [
                     'email' => $email,
                     'password' => $password,
-                    'rememberMe' => 'true'
+                    'rememberMe' => 'false',
+					'captcha' => ''
                 ],
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded',

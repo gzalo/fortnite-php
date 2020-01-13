@@ -58,8 +58,7 @@ class Auth
      * @return     self       New Auth instance
      */
     public static function login($email, $password, $challenge = '', $code = '')
-    {
-
+    {	
         $requestParams = [
             'includePerms' => 'false', // We don't need these here
             'token_type' => 'eg1'
@@ -82,13 +81,19 @@ class Auth
         }
 
         $client = new Client(['cookies' => true]);
-
-        $dataToken = FortniteClient::sendUnrealXSRFClientPostRequest($client);
-
-        $data = FortniteClient::sendUnrealClientLoginRequestPostRequest($client, $dataToken, $email, $password);
-
-        $dataParam = FortniteClient::sendUnrealClientExchangePostRequest($client, $dataToken);
-
+		
+		$dataToken = FortniteClient::sendUnrealXSRFClientPostRequest($client);
+		
+		try{
+			$data = FortniteClient::sendUnrealClientLoginRequestPostRequest($client, $dataToken, $email, $password);		
+		}catch(\Exception $e){
+			$dataToken = FortniteClient::sendUnrealXSRFClientPostRequest($client);
+			
+			$data = FortniteClient::sendUnrealClientLoginRequestPostRequest($client, $dataToken, $email, $password);	
+		}
+		
+		$dataParam = FortniteClient::sendUnrealClientExchangePostRequest($client, $dataToken);
+						
         $requestParams = array_merge($requestParams, [
             'grant_type' => 'exchange_code',
             'exchange_code' => $dataParam->code,
