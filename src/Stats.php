@@ -44,7 +44,7 @@ class Stats {
 
         $data = FortniteClient::sendFortniteGetRequest(FortniteClient::FORTNITE_API . 'stats/accountId/' . $account_id . '/bulk/window/alltime',
                                                      $this->access_token);
-
+		
         // Remove - from account ID and get it's display name
         $this->display_name = Account::getDisplayNameFromID(str_replace("-","",$this->account_id), $this->access_token);
         //if (!count($data)) throw new StatsNotFoundException('Unable to find any stats for account id '. $account_id);
@@ -70,15 +70,8 @@ class Stats {
      * @param  string $username Display name to search
      * @return object           New instance of Fortnite\Stats
      */
-    public function lookup($username) {
-        try {
-            $data = FortniteClient::sendFortniteGetRequest(FortniteClient::FORTNITE_PERSONA_API . 'public/account/lookup?q=' . urlencode($username),
-                                                        $this->access_token);
-            return new self($this->access_token, $data->id);
-        } catch (GuzzleException $e) {
-            if ($e->getResponse()->getStatusCode() == 404) throw new UserNotFoundException('User ' . $username . ' was not found.');
-            throw $e; //If we didn't get the user not found status code, just re-throw the error.
-        }
+    public function lookup($userdata) {		
+		return new self($this->access_token, $userdata['id']);
     }
 
     //TODO (Tustin): Make this not redundant
